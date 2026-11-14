@@ -228,6 +228,7 @@ namespace webgpu
                         s->format = format;
                         s->surface = std::move(surface);
                         s->view = std::move(view);
+                        s->view->onExposed = [this] { triggerRepaint(); };
                         s->native = true;
                     }
                     wgpuSurfaceCapabilitiesFreeMembers(caps);

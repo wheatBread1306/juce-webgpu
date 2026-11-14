@@ -27,6 +27,9 @@ namespace webgpu
                     PAINTSTRUCT ps;
                     BeginPaint(hwnd, &ps);
                     EndPaint(hwnd, &ps);
+                    // The exposed area holds nothing until the next present, so ask for a frame
+                    if (auto* view = reinterpret_cast<NativeSurfaceView*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA)); view != nullptr && view->onExposed)
+                        view->onExposed();
                     return 0;
                 }
                 default: break;
@@ -117,6 +120,8 @@ namespace webgpu
                 if (hwnd == nullptr)
                     return {};
 
+                // Read by surfaceWndProc. The HWND is destroyed by hwndComponent, before this view
+                SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(static_cast<NativeSurfaceView*>(this)));
                 hwndComponent.setHWND(hwnd);
                 hwndComponent.updateHWNDBounds();
             }

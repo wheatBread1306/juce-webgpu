@@ -18,5 +18,9 @@ namespace webgpu
         [[nodiscard]] virtual Surface createSurface(WGPUInstance instance) = 0;
 
         [[nodiscard]] virtual juce::Point<int> getPixelSize() const = 0;
+
+        // Called on the message thread when the OS asks for the surface contents again
+        // (e.g. a part of the window comes back from off-screen).
+        std::function<void()> onExposed;
     };
 }
